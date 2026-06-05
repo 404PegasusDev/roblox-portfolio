@@ -393,6 +393,8 @@ video {
 
 .modelling-showcase img {
   width: 100%;
+  display: block;
+  height: auto;
   border-radius: 14px;
   border: 1px solid var(--line);
   background: #090d18;
@@ -422,6 +424,7 @@ video {
 
 .project-card img {
   width: 100%;
+  display: block;
   border-radius: 10px;
   border: 1px solid var(--line);
   aspect-ratio: 16 / 9;
@@ -429,6 +432,13 @@ video {
   background: #090d18;
   margin-bottom: 0.7rem;
   transition: transform 0.35s ease, border-color 0.35s ease;
+}
+
+#modelling .project-card img {
+  object-fit: contain;
+  aspect-ratio: auto;
+  min-height: 180px;
+  max-height: 320px;
 }
 
 .project-card:hover img {
@@ -723,6 +733,58 @@ video {
   }
 }
 
+@media (max-width: 768px) {
+  .container {
+    width: min(1080px, 94%);
+  }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-content {
+    padding-top: 4vh;
+  }
+
+  .project-grid,
+  .project-grid--scripting {
+    grid-template-columns: 1fr;
+  }
+
+  .modelling-feature,
+  .modelling-showcase {
+    max-width: 100%;
+  }
+
+  #modelling .project-card img {
+    min-height: 200px;
+    max-height: none;
+  }
+
+  video,
+  .modelling-feature-video {
+    max-width: 100%;
+  }
+
+  .lightbox-image {
+    max-width: 96vw;
+    max-height: 82vh;
+  }
+
+  .footer-content {
+    padding: 1rem;
+  }
+
+  .contact-list {
+    max-width: 100%;
+  }
+
+  .scroll-reveal:not(.in-view) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 640px) {
   .nav-links {
     display: none;
@@ -731,5 +793,9 @@ video {
   .stats-wrap {
     grid-template-columns: 1fr;
     max-width: 340px;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 9vw, 2.6rem);
   }
 }
