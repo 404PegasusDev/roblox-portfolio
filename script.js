@@ -17,16 +17,51 @@ portfolioImages.forEach((img) => {
 });
 
 portfolioVideos.forEach((video) => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "video-wrapper";
+
+  const preview = document.createElement("img");
+  preview.className = "video-preview";
+  preview.src = videoPoster;
+  preview.alt = "Portfolio clip preview";
+  preview.loading = "eager";
+  preview.decoding = "async";
+
+  const overlay = document.createElement("div");
+  overlay.className = "video-overlay";
+  overlay.innerHTML = `<span>▶</span><small>Tap to play</small>`;
+
+  const parent = video.parentNode;
+  parent.insertBefore(wrapper, video);
+  wrapper.appendChild(preview);
+  wrapper.appendChild(overlay);
+  wrapper.appendChild(video);
+
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
-  if (!video.hasAttribute("poster")) {
-    video.setAttribute("poster", videoPoster);
-  }
+  video.preload = "none";
+  video.controls = true;
+  video.style.display = "none";
 
-  video.addEventListener("click", () => {
+  const showVideo = () => {
+    wrapper.classList.add("is-playing");
+    preview.style.display = "none";
+    overlay.style.display = "none";
+    video.style.display = "block";
+    video.load();
     if (video.paused) {
       video.play().catch(() => {});
     }
+  };
+
+  preview.addEventListener("click", showVideo);
+  overlay.addEventListener("click", showVideo);
+  video.addEventListener("click", showVideo);
+  video.addEventListener("ended", () => {
+    wrapper.classList.remove("is-playing");
+    preview.style.display = "block";
+    overlay.style.display = "flex";
+    video.style.display = "none";
   });
 });
 
