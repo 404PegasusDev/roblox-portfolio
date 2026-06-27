@@ -9,6 +9,52 @@ const videoPoster =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 675'%3E%3Crect width='1200' height='675' fill='%230b1020'/%3E%3Crect x='80' y='80' width='1040' height='515' rx='24' fill='%231b2f5e'/%3E%3Ccircle cx='600' cy='338' r='210' fill='rgba(110,168,254,0.16)'/%3E%3Cpath d='M530 240l220 140-220 140z' fill='%23ffffff'/%3E%3Ctext x='600' y='585' text-anchor='middle' font-family='Inter, Arial, sans-serif' font-size='44' fill='%23e8f2ff'%3ETap to play%3C/text%3E%3C/svg%3E";
 
 const portfolioVideos = document.querySelectorAll("video");
+
+let autoLoadedVideoCount = 0;
+const maxAutoLoadedVideos = 3;
+
+function encodeMediaPath(sourceUrl) {
+  return sourceUrl
+    .split("/")
+    .map((segment) => encodeURIComponent(decodeURIComponent(segment)))
+    .join("/");
+}
+
+function loadVideoSource(video) {
+  if (video.dataset.loaded === "true") return;
+
+  const source = video.querySelector("source");
+  const sourceUrl = source?.getAttribute("src") || video.dataset.src || "";
+  if (!sourceUrl) return;
+
+  if (autoLoadedVideoCount < maxAutoLoadedVideos) {
+    autoLoadedVideoCount += 1;
+  } else {
+    return;
+  }
+
+  video.preload = "metadata";
+  video.setAttribute("src", encodeMediaPath(sourceUrl));
+  video.dataset.loaded = "true";
+  video.load();
+}
+
+const videoObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      const frame = entry.target;
+      const video = frame.querySelector("video");
+      if (!video) return;
+
+      loadVideoSource(video);
+      observer.unobserve(frame);
+    });
+  },
+  { rootMargin: "140px 0px 140px 0px", threshold: 0.1 }
+);
+
 portfolioVideos.forEach((video) => {
   const frame = document.createElement("div");
   frame.className = "video-frame";
@@ -25,6 +71,13 @@ portfolioVideos.forEach((video) => {
   frame.appendChild(video);
   frame.appendChild(fallback);
 
+  const source = video.querySelector("source");
+  if (source) {
+    video.dataset.src = source.getAttribute("src");
+    source.remove();
+  }
+
+  video.preload = "none";
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
   if (!video.hasAttribute("poster")) {
@@ -35,6 +88,7 @@ portfolioVideos.forEach((video) => {
   const hideFallback = () => frame.classList.add("is-ready");
 
   const tryPlay = () => {
+    loadVideoSource(video);
     if (video.paused) {
       video.play().catch(() => showFallback());
     }
@@ -55,6 +109,8 @@ portfolioVideos.forEach((video) => {
   });
   video.addEventListener("click", tryPlay);
   fallback.addEventListener("click", tryPlay);
+
+  videoObserver.observe(frame);
 });
 
 staggerItems.forEach((item, index) => {
