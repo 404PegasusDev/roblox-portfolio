@@ -20,21 +20,13 @@ portfolioVideos.forEach((video) => {
   const wrapper = document.createElement("div");
   wrapper.className = "video-wrapper";
 
-  const preview = document.createElement("img");
+  const preview = document.createElement("div");
   preview.className = "video-preview";
-  preview.src = videoPoster;
-  preview.alt = "Portfolio clip preview";
-  preview.loading = "eager";
-  preview.decoding = "async";
-
-  const overlay = document.createElement("div");
-  overlay.className = "video-overlay";
-  overlay.innerHTML = `<span>▶</span><small>Tap to play</small>`;
+  preview.innerHTML = `<span class="video-preview__icon">▶</span><span class="video-preview__label">Tap to play</span>`;
 
   const parent = video.parentNode;
   parent.insertBefore(wrapper, video);
   wrapper.appendChild(preview);
-  wrapper.appendChild(overlay);
   wrapper.appendChild(video);
 
   video.setAttribute("playsinline", "");
@@ -46,7 +38,6 @@ portfolioVideos.forEach((video) => {
   const showVideo = () => {
     wrapper.classList.add("is-playing");
     preview.style.display = "none";
-    overlay.style.display = "none";
     video.style.display = "block";
     video.load();
     if (video.paused) {
@@ -55,12 +46,10 @@ portfolioVideos.forEach((video) => {
   };
 
   preview.addEventListener("click", showVideo);
-  overlay.addEventListener("click", showVideo);
   video.addEventListener("click", showVideo);
   video.addEventListener("ended", () => {
     wrapper.classList.remove("is-playing");
-    preview.style.display = "block";
-    overlay.style.display = "flex";
+    preview.style.display = "flex";
     video.style.display = "none";
   });
 });
