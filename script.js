@@ -10,21 +10,51 @@ const videoPoster =
 
 const portfolioVideos = document.querySelectorAll("video");
 portfolioVideos.forEach((video) => {
+  const frame = document.createElement("div");
+  frame.className = "video-frame";
+
+  const fallback = document.createElement("div");
+  fallback.className = "video-fallback";
+  fallback.innerHTML = `
+    <span class="video-fallback__icon">▶</span>
+    <span class="video-fallback__text">Tap to play</span>
+  `;
+
+  const parent = video.parentNode;
+  parent.insertBefore(frame, video);
+  frame.appendChild(video);
+  frame.appendChild(fallback);
+
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
   if (!video.hasAttribute("poster")) {
     video.setAttribute("poster", videoPoster);
   }
 
-  video.addEventListener("click", () => {
+  const showFallback = () => frame.classList.remove("is-ready");
+  const hideFallback = () => frame.classList.add("is-ready");
+
+  const tryPlay = () => {
     if (video.paused) {
-      video.play().catch(() => {});
+      video.play().catch(() => showFallback());
+    }
+  };
+
+  video.addEventListener("loadeddata", hideFallback);
+  video.addEventListener("canplay", hideFallback);
+  video.addEventListener("play", hideFallback);
+  video.addEventListener("ended", showFallback);
+  video.addEventListener("pause", () => {
+    if (video.ended) {
+      showFallback();
     }
   });
-
   video.addEventListener("error", () => {
-    video.setAttribute("poster", videoPoster);
+    frame.classList.add("is-error");
+    showFallback();
   });
+  video.addEventListener("click", tryPlay);
+  fallback.addEventListener("click", tryPlay);
 });
 
 staggerItems.forEach((item, index) => {
