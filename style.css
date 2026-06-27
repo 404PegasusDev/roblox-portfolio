@@ -340,10 +340,12 @@ h3 {
 
 video {
   width: 100%;
+  display: block;
   border-radius: 10px;
   border: 1px solid var(--line);
   aspect-ratio: 16 / 9;
-  background: #090d18;
+  object-fit: cover;
+  background: linear-gradient(135deg, #0b1020 0%, #1b2f5e 100%);
   margin-bottom: 0.7rem;
   transition: transform 0.35s ease, border-color 0.35s ease;
 }

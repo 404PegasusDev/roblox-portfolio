@@ -5,6 +5,27 @@ const staggerItems = document.querySelectorAll(".project-card, .stat-card");
 const copyButtons = document.querySelectorAll(".copy-btn");
 const scrollRevealItems = document.querySelectorAll(".scroll-reveal");
 const countUpItems = document.querySelectorAll(".count-up");
+const videoPoster =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 675'%3E%3Crect width='1200' height='675' fill='%230b1020'/%3E%3Crect x='80' y='80' width='1040' height='515' rx='24' fill='%231b2f5e'/%3E%3Ccircle cx='600' cy='338' r='210' fill='rgba(110,168,254,0.16)'/%3E%3Cpath d='M530 240l220 140-220 140z' fill='%23ffffff'/%3E%3Ctext x='600' y='585' text-anchor='middle' font-family='Inter, Arial, sans-serif' font-size='44' fill='%23e8f2ff'%3ETap to play%3C/text%3E%3C/svg%3E";
+
+const portfolioVideos = document.querySelectorAll("video");
+portfolioVideos.forEach((video) => {
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
+  if (!video.hasAttribute("poster")) {
+    video.setAttribute("poster", videoPoster);
+  }
+
+  video.addEventListener("click", () => {
+    if (video.paused) {
+      video.play().catch(() => {});
+    }
+  });
+
+  video.addEventListener("error", () => {
+    video.setAttribute("poster", videoPoster);
+  });
+});
 
 staggerItems.forEach((item, index) => {
   item.style.transitionDelay = `${Math.min(index * 70, 280)}ms`;
