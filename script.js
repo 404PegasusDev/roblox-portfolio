@@ -66,7 +66,7 @@ const revealObserver = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.14 }
+  { threshold: 0, rootMargin: "0px 0px -8% 0px" }
 );
 
 revealItems.forEach((item) => revealObserver.observe(item));
@@ -83,27 +83,30 @@ modellingRevealItems.forEach((item, index) => {
   item.style.setProperty("--delay", `${Math.min(index * 25, 75)}ms`);
 });
 
-const isMobileView = window.matchMedia("(max-width: 768px)").matches;
-
 const contentRevealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("in-view");
-      } else if (!isMobileView) {
-        entry.target.classList.remove("in-view");
       }
     });
   },
-  isMobileView
-    ? { threshold: 0.01, rootMargin: "0px 0px 30% 0px" }
-    : { threshold: 0.05, rootMargin: "0px 0px 18% 0px" }
+  { threshold: 0, rootMargin: "0px 0px 12% 0px" }
 );
 
 function revealItemsInViewport() {
+  const viewportBottom = window.innerHeight * 0.92;
+
+  revealItems.forEach((item) => {
+    const rect = item.getBoundingClientRect();
+    if (rect.top < viewportBottom && rect.bottom > 0) {
+      item.classList.add("visible");
+    }
+  });
+
   scrollRevealItems.forEach((item) => {
     const rect = item.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+    if (rect.top < viewportBottom && rect.bottom > 0) {
       item.classList.add("in-view");
     }
   });
@@ -113,6 +116,7 @@ scrollRevealItems.forEach((item) => contentRevealObserver.observe(item));
 revealItemsInViewport();
 window.addEventListener("load", revealItemsInViewport);
 window.addEventListener("resize", revealItemsInViewport);
+window.addEventListener("scroll", revealItemsInViewport, { passive: true });
 
 const activeCountAnimations = new WeakMap();
 

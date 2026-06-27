@@ -734,7 +734,8 @@ video {
   transition: opacity 0.75s ease, transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.reveal.visible {
+.reveal.visible,
+.no-js .reveal {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
@@ -746,7 +747,8 @@ video {
   transition-delay: var(--delay, 0ms);
 }
 
-.scroll-reveal.in-view {
+.scroll-reveal.in-view,
+.no-js .scroll-reveal {
   opacity: 1;
   transform: translateY(0);
 }
